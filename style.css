@@ -764,7 +764,7 @@ nav ul li a.active-link {
 }
 
 .user-dropdown:hover .arrow {
-    transform: rotate(180deg); /* Panah muter */
+    transform: rotate(180deg);
 }
 .arrow { transition: transform 0.3s; font-size: 0.8rem; }
 

@@ -138,17 +138,14 @@ $list_users = $DB->query("SELECT nim, nama_lengkap, foto_profil FROM tbl_users O
             // Loop semua data dari database
             while($item = $aside_items->fetch_assoc()): 
                 
-                // 1. LOGIKA MUSIK: Cek apakah baris ini punya file lagu?
-                // Jika iya, simpan datanya untuk diputar di Music Player bawah.
+                
                 if (!empty($item['lagu']) && strpos($item['lagu'], '.mp3') !== false) {
                      $lagu_path = "uploads/" . $item['lagu'];
                      $judul_lagu_player = !empty($item['judul_lagu']) ? $item['judul_lagu'] : "Judul Tidak Diketahui";
                      $nama_artis_player = !empty($item['keterangan']) ? $item['keterangan'] : "-";
                 }
                 
-                // 2. LOGIKA KARTU: Cek apakah baris ini punya Nama Kegiatan?
-                // Jika iya, TAMPILKAN sebagai kartu hobi.
-                // (Kita hapus fungsi 'continue' agar kartu tetap muncul walau ada lagunya)
+               
                 if (!empty($item['nama_kegiatan'])):
             ?>
                 <div class="hobby-card">
@@ -214,7 +211,7 @@ $list_users = $DB->query("SELECT nim, nama_lengkap, foto_profil FROM tbl_users O
         let playing = false;
         
         if(audio.getAttribute('src') === "") {
-            btn.style.display = 'none'; // Sembunyikan tombol jika tidak ada lagu
+            btn.style.display = 'none'; 
         }
 
         btn.addEventListener('click', () => {
