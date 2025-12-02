@@ -20,7 +20,7 @@ $pengalaman   = $DB->query("SELECT * FROM tbl_pengalaman WHERE nim = '$nim'");
 $keahlian     = $DB->query("SELECT * FROM tbl_keahlian WHERE nim = '$nim'");
 $aside_items  = $DB->query("SELECT * FROM tbl_aside WHERE nim = '$nim'");
 $footer_data  = $DB->query("SELECT * FROM tbl_footer WHERE nim = '$nim'")->fetch_assoc();
-$list_users   = $DB->query("SELECT nim, nama_lengkap FROM tbl_users ORDER BY id_user DESC");
+$list_users = $DB->query("SELECT nim, nama_lengkap, foto_profil FROM tbl_users ORDER BY id_user DESC");
 ?>
 
 <!DOCTYPE html>
@@ -41,14 +41,26 @@ $list_users   = $DB->query("SELECT nim, nama_lengkap FROM tbl_users ORDER BY id_
 </head>
 <body>
 
-  <div class="user-switcher">
-      <form action="" method="GET">
-          <select name="nim" onchange="this.form.submit()">
-              <?php while($u = $list_users->fetch_assoc()): ?>
-                  <option value="<?= $u['nim'] ?>" <?= ($u['nim'] == $nim) ? 'selected' : '' ?>><?= $u['nama_lengkap'] ?></option>
-              <?php endwhile; ?>
-          </select>
-      </form>
+ <div class="user-dropdown">
+      <button class="drop-btn">
+          <i class="fas fa-user-circle"></i> 
+          <span>Ganti User</span>
+          <i class="fas fa-chevron-down arrow"></i>
+      </button>
+      
+      <div class="dropdown-content">
+          <p class="dropdown-header">Pilih Profil:</p>
+          <?php 
+          // Kembalikan data user ke baris pertama agar bisa di-loop ulang
+          $list_users->data_seek(0); 
+          while($u = $list_users->fetch_assoc()): 
+          ?>
+              <a href="?nim=<?= $u['nim'] ?>" class="<?= ($u['nim'] == $nim) ? 'active-user' : '' ?>">
+                  <img src="<?= !empty($u['foto_profil']) ? 'uploads/'.$u['foto_profil'] : 'pp.jpg' ?>" class="mini-pp">
+                  <?= $u['nama_lengkap'] ?>
+              </a>
+          <?php endwhile; ?>
+      </div>
   </div>
 
   <header>
@@ -126,17 +138,14 @@ $list_users   = $DB->query("SELECT nim, nama_lengkap FROM tbl_users ORDER BY id_
             // Loop semua data dari database
             while($item = $aside_items->fetch_assoc()): 
                 
-                // 1. LOGIKA MUSIK: Cek apakah baris ini punya file lagu?
-                // Jika iya, simpan datanya untuk diputar di Music Player bawah.
+                
                 if (!empty($item['lagu']) && strpos($item['lagu'], '.mp3') !== false) {
                      $lagu_path = "uploads/" . $item['lagu'];
                      $judul_lagu_player = !empty($item['judul_lagu']) ? $item['judul_lagu'] : "Judul Tidak Diketahui";
                      $nama_artis_player = !empty($item['keterangan']) ? $item['keterangan'] : "-";
                 }
                 
-                // 2. LOGIKA KARTU: Cek apakah baris ini punya Nama Kegiatan?
-                // Jika iya, TAMPILKAN sebagai kartu hobi.
-                // (Kita hapus fungsi 'continue' agar kartu tetap muncul walau ada lagunya)
+               
                 if (!empty($item['nama_kegiatan'])):
             ?>
                 <div class="hobby-card">
@@ -202,7 +211,7 @@ $list_users   = $DB->query("SELECT nim, nama_lengkap FROM tbl_users ORDER BY id_
         let playing = false;
         
         if(audio.getAttribute('src') === "") {
-            btn.style.display = 'none'; // Sembunyikan tombol jika tidak ada lagu
+            btn.style.display = 'none'; 
         }
 
         btn.addEventListener('click', () => {
